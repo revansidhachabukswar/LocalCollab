@@ -9,10 +9,11 @@ type Creator = { name: string; handle: string; instagram: string; avatar: string
 type Campaign = { title: string; location: string; code: string; budget: number; stage: string; uses: number; kind: string };
 
 const creators: Creator[] = [
-  { name: "Mangesh Padamwar", handle: "@pune_artkitchen", instagram: "https://www.instagram.com/pune_artkitchen/", avatar: "MP", category: "Food, travel & lifestyle", location: "Pune, Maharashtra", followers: "332k", engagement: "0.36%", rate: "Ask for rate", kind: "reach", blurb: "Pune-based creator sharing food, travel, lifestyle, and local discoveries.", color: "peach" },
-  { name: "Mrunmai", handle: "@tasteofmiles", instagram: "https://www.instagram.com/tasteofmiles/", avatar: "M", category: "Food & travel", location: "Pune, Maharashtra", followers: "54.4k", engagement: "1.29%", rate: "Ask for rate", kind: "reach", blurb: "Pune food blogger featuring local restaurants and travel finds.", color: "blue" },
-  { name: "Swarali Kulkarni Pendurkar", handle: "@mumbaifoodjunkie", instagram: "https://www.instagram.com/mumbaifoodjunkie/", avatar: "SK", category: "Food & travel", location: "Mumbai, Maharashtra", followers: "103.8k", engagement: "1.65%", rate: "Ask for rate", kind: "reach", blurb: "Mumbai food and travel creator covering local places, culture, and experiences.", color: "sage" },
-  { name: "Rohit Haryani", handle: "@thehungrymumbaikar", instagram: "https://www.instagram.com/thehungrymumbaikar/", avatar: "RH", category: "Food & travel", location: "Mumbai, Maharashtra", followers: "85.9k", engagement: "1.80%", rate: "Ask for rate", kind: "reach", blurb: "Mumbai-based food and travel creator sharing local dining discoveries.", color: "lilac" },
+  { name: "Pune Food Blogger", handle: "@pune_food_blogger", instagram: "https://www.instagram.com/pune_food_blogger/", avatar: "PF", category: "Food · Pune's food and beverage scene", location: "Pune, Maharashtra", followers: "250.4k", engagement: "0.27%", rate: "Ask for rate", kind: "reach", blurb: "Local food discoveries, restaurants, and Pune dining spots.", color: "peach" },
+  { name: "Food & Travel Blogger", handle: "@foodie.soulmates", instagram: "https://www.instagram.com/foodie.soulmates/", avatar: "FS", category: "Food & travel", location: "Pune, Maharashtra", followers: "92.6k", engagement: "2.02%", rate: "Ask for rate", kind: "reach", blurb: "Food and travel recommendations from a Pune-based creator profile.", color: "blue" },
+  { name: "Mrunmai", handle: "@tasteofmiles", instagram: "https://www.instagram.com/tasteofmiles/", avatar: "M", category: "Food & travel", location: "Pune, Maharashtra", followers: "54.4k", engagement: "1.29%", rate: "Ask for rate", kind: "reach", blurb: "Pune food blogger featuring local restaurants and travel finds.", color: "sage" },
+  { name: "Dr Ruchi Parekh", handle: "@thevegetarianfoodiee", instagram: "https://www.instagram.com/thevegetarianfoodiee/", avatar: "RP", category: "Food, travel & lifestyle", location: "Pune, Maharashtra", followers: "44.6k", engagement: "0.91%", rate: "Ask for rate", kind: "reach", blurb: "Pune-based food, restaurant, stay, and travel recommendations.", color: "lilac" },
+  { name: "Samruddha Patil", handle: "@when_in_pune", instagram: "https://www.instagram.com/when_in_pune/", avatar: "SP", category: "Food & local discovery", location: "Pune, Maharashtra", followers: "27.5k", engagement: "0.76%", rate: "Ask for rate", kind: "reach", blurb: "Pune-focused local discovery and social content profile.", color: "peach" },
 ];
 
 const initialCampaigns: Campaign[] = [
@@ -223,19 +224,19 @@ function Campaigns({ campaigns, onCreate }: { campaigns: Campaign[]; onCreate: (
 function CreatorDiscovery({ matchType, setMatchType, onInvite }: { matchType: "reach" | "ugc"; setMatchType: (type: "reach" | "ugc") => void; onInvite: (name: string) => void }) {
   const filtered = creators.filter(creator => creator.kind === matchType);
   return <>
-    <PageIntro eyebrow="LOCAL PEOPLE, GREAT STORIES" title="Find your creator match" description="Explore public Instagram creator profiles around Pune and Mumbai." />
+    <PageIntro eyebrow="LOCAL PEOPLE, GREAT STORIES" title="Find your creator match" description="Explore public Instagram creator profiles based in Pune. Listing metrics are estimates; check the profile for current details." />
     <div className="match-toggle">
       <button className={matchType === "reach" ? "active" : ""} onClick={() => setMatchType("reach")}>◎ &nbsp;Creator reach <small>Audience, community & influence</small></button>
       <button className={matchType === "ugc" ? "active" : ""} onClick={() => setMatchType("ugc")}>▣ &nbsp;UGC makers <small>Content quality & price, any audience size</small></button>
     </div>
-    <div className="filters-row"><span>⌖ &nbsp;Pune · Mumbai</span><span>⌘ &nbsp;Food · Travel · Lifestyle</span><span>◉ &nbsp;Check languages on profiles</span><span className="result-count">{filtered.length} public profiles</span></div>
+    <div className="filters-row"><span>⌖ &nbsp;Pune, Maharashtra</span><span>⌘ &nbsp;Food · Travel · Lifestyle</span><span>◉ &nbsp;Check languages and rates on profiles</span><span className="result-count">{filtered.length} public profiles</span></div>
     <div className="creator-grid">
       {filtered.length ? filtered.map(creator => <article className="creator-card" key={creator.name}>
         <div className="creator-card-top"><div className={`creator-avatar large ${creator.color}`}>{creator.avatar}</div><span className="fit-score">{creator.location.split(",")[0]}</span></div>
         <h3>{creator.name}</h3><span className="creator-handle"><a href={creator.instagram} target="_blank" rel="noreferrer">{creator.handle} ↗</a> · {creator.location}</span>
         <p>{creator.blurb}</p>
         <div className="creator-meta"><span>Followers<b>{creator.followers}</b></span><span>Engagement<b>{creator.engagement}</b></span><span>Rate<b>{creator.rate}</b></span></div>
-        <div className="why-fit">Public Instagram profile · Metrics are estimates and may change.</div>
+        <div className="why-fit">Directory snapshot · Metrics can change; verify on Instagram.</div>
         <button className="button-primary full-button" onClick={() => onInvite(creator.name)}>Draft an invitation <span>→</span></button>
       </article>) : <div className="panel empty-creators"><b>No public UGC profiles in this sample</b><p>The listed accounts are local creator-reach profiles. Open their Instagram pages to review their latest work and collaboration details.</p></div>}
     </div>

@@ -9,10 +9,11 @@ const model = process.env.OPENAI_MODEL || "gpt-4.1-mini";
 const baseRules = `Do not invent business facts, product claims, discounts, addresses, audience metrics, creator prices, legal requirements, or performance outcomes. Preserve supplied promo codes and deal terms exactly. Make drafts concise and editable. Never send, publish, book, accept, or pay on a user's behalf.`;
 
 const sampleCreators = [
-  { name: "Mangesh Padamwar", handle: "@pune_artkitchen", instagram: "https://www.instagram.com/pune_artkitchen/", category: "Food, travel & lifestyle creator", market: "Pune, Maharashtra", languages: [], audience: 332300, engagement: 0.36, offers: ["audience_reach"] },
+  { name: "Pune Food Blogger", handle: "@pune_food_blogger", instagram: "https://www.instagram.com/pune_food_blogger/", category: "Food creator", market: "Pune, Maharashtra", languages: [], audience: 250400, engagement: 0.27, offers: ["audience_reach"] },
+  { name: "Food & Travel Blogger", handle: "@foodie.soulmates", instagram: "https://www.instagram.com/foodie.soulmates/", category: "Food & travel creator", market: "Pune, Maharashtra", languages: [], audience: 92600, engagement: 2.02, offers: ["audience_reach"] },
   { name: "Mrunmai", handle: "@tasteofmiles", instagram: "https://www.instagram.com/tasteofmiles/", category: "Food & travel creator", market: "Pune, Maharashtra", languages: [], audience: 54400, engagement: 1.29, offers: ["audience_reach"] },
-  { name: "Swarali Kulkarni Pendurkar", handle: "@mumbaifoodjunkie", instagram: "https://www.instagram.com/mumbaifoodjunkie/", category: "Food & travel creator", market: "Mumbai, Maharashtra", languages: [], audience: 103800, engagement: 1.65, offers: ["audience_reach"] },
-  { name: "Rohit Haryani", handle: "@thehungrymumbaikar", instagram: "https://www.instagram.com/thehungrymumbaikar/", category: "Food & travel creator", market: "Mumbai, Maharashtra", languages: [], audience: 85900, engagement: 1.8, offers: ["audience_reach"] },
+  { name: "Dr Ruchi Parekh", handle: "@thevegetarianfoodiee", instagram: "https://www.instagram.com/thevegetarianfoodiee/", category: "Food, travel & lifestyle creator", market: "Pune, Maharashtra", languages: [], audience: 44600, engagement: 0.91, offers: ["audience_reach"] },
+  { name: "Samruddha Patil", handle: "@when_in_pune", instagram: "https://www.instagram.com/when_in_pune/", category: "Food & local discovery creator", market: "Pune, Maharashtra", languages: [], audience: 27500, engagement: 0.76, offers: ["audience_reach"] },
 ];
 
 const findCreators = tool({
@@ -26,7 +27,7 @@ const findCreators = tool({
   execute: async ({ campaignType, market, language }) => {
     const wantedCity = market.toLocaleLowerCase().split(",")[0].trim();
     const sameMarket = sampleCreators.filter(person => person.market.toLocaleLowerCase().includes(wantedCity) || wantedCity === "unspecified");
-    const matches = (sameMarket.length ? sameMarket : sampleCreators).filter(person => {
+    const matches = sameMarket.filter(person => {
       if (!person.offers.includes(campaignType)) return false;
       if (language && person.languages.length > 0 && !person.languages.some(item => item.toLocaleLowerCase().startsWith(language.toLocaleLowerCase().slice(0, 2)))) return false;
       return true;
