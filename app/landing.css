@@ -1,0 +1,14 @@
+.auth-shell{grid-template-columns:minmax(0,1.12fr) minmax(360px,.88fr);font-family:Inter,'DM Sans',sans-serif}
+.auth-card{width:min(470px,calc(100% - 56px));padding:48px 0}
+.auth-brand{margin-bottom:68px}
+.auth-copy{max-width:450px;margin-bottom:26px}
+.auth-copy>.eyebrow{display:block;margin-bottom:17px;font-size:9px;letter-spacing:1.8px}
+.auth-copy h1{font-family:'Space Grotesk',Manrope,sans-serif;font-size:clamp(43px,5vw,59px);font-weight:600;line-height:1.035;letter-spacing:-3.2px;margin:0 0 17px;color:#1c302b}
+.auth-copy h1 span{color:#47704f}
+.auth-copy>p{max-width:370px;font:400 15px/1.7 Inter,'DM Sans',sans-serif;letter-spacing:-.12px;color:#718078;margin:0}
+.auth-card .auth-notice{max-width:450px;margin:0 0 16px;font-family:Inter,'DM Sans',sans-serif;line-height:1.65}
+.auth-card .google-button{max-width:450px;min-height:48px;font:600 12px Inter,'DM Sans',sans-serif;letter-spacing:.05px}
+.auth-card>small{max-width:450px;font-family:Inter,'DM Sans',sans-serif;line-height:1.6}
+.auth-aside{font-family:Inter,'DM Sans',sans-serif}
+.auth-quote{font-family:'Space Grotesk',Manrope,sans-serif;font-weight:500;letter-spacing:-1px;line-height:1.3}
+@media(max-width:760px){.auth-shell{grid-template-columns:1fr}.auth-card{width:min(460px,calc(100% - 40px));padding:36px 0}.auth-brand{margin-bottom:46px}.auth-copy{margin-bottom:22px}.auth-copy>.eyebrow{font-size:8px;letter-spacing:1.35px;margin-bottom:14px}.auth-copy h1{font-size:clamp(40px,10vw,50px);letter-spacing:-2.5px}.auth-copy>p{font-size:14px;line-height:1.65}.auth-aside{min-height:240px}}
