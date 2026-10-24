@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type FormEvent, type ReactNode } from "react";
+import Link from "next/link";
 
 type Role = "business" | "creator";
 type NavKey = "overview" | "campaigns" | "discover" | "results" | "opportunities" | "studio" | "earnings";
@@ -29,7 +30,7 @@ const creatorNav: { key: NavKey; label: string; icon: string }[] = [
   { key: "studio", label: "Creator studio", icon: "✎" }, { key: "earnings", label: "Earnings & codes", icon: "↗" },
 ];
 
-export default function Dashboard({ role, displayName, city, region, email }: { role: Role; displayName: string; city: string; region: string; email: string }) {
+export default function Dashboard({ role, displayName, city, region, email, isDemo = false }: { role: Role; displayName: string; city: string; region: string; email: string; isDemo?: boolean }) {
   const [nav, setNav] = useState<NavKey>("overview");
   const [campaigns, setCampaigns] = useState(initialCampaigns);
   const [modal, setModal] = useState(false);
@@ -116,11 +117,11 @@ export default function Dashboard({ role, displayName, city, region, email }: { 
           {navItems.map(item => <button key={item.key} className={nav === item.key ? "nav-active" : ""} onClick={() => setNav(item.key)}><span className="nav-icon">{item.icon}</span>{item.label}</button>)}
         </nav>
         <div className="market-card"><span className="market-icon">⌖</span><div><small>YOUR LOCAL MARKET</small><b>{[city, region].filter(Boolean).join(", ") || "Add your market"}</b></div><span className="chevron">⌄</span></div>
-        <div className="sidebar-bottom"><div className="user-avatar">{displayName.split(/\s+/).map(part => part[0]).join("").slice(0,2).toUpperCase()}</div><div className="user-lines"><b>{displayName}</b><span>{email}</span></div><form action="/auth/signout" method="post"><button className="dots" aria-label="Sign out" title="Sign out">↗</button></form></div>
+        <div className="sidebar-bottom"><div className="user-avatar">{displayName.split(/\s+/).map(part => part[0]).join("").slice(0,2).toUpperCase()}</div><div className="user-lines"><b>{displayName}</b><span>{email}</span></div>{isDemo ? <Link className="dots demo-exit" href="/login" aria-label="Exit demo" title="Exit demo">↗</Link> : <form action="/auth/signout" method="post"><button className="dots" aria-label="Sign out" title="Sign out">↗</button></form>}</div>
       </aside>
 
       <main className="main-area">
-        <header className="topbar"><div className="breadcrumb"><span>Workspace</span><b>/</b><strong>{pageTitle}</strong></div><div className="top-actions"><span className="market-pill"><i></i> {[city, region].filter(Boolean).join(", ")}</span><button className="icon-btn" aria-label="Notifications" onClick={() => notify("You’re all caught up")}>♧<span className="notification-dot"></span></button><div className="header-avatar" aria-label={displayName}>{displayName.split(/\s+/).map(part => part[0]).join("").slice(0,2).toUpperCase()}</div><form action="/auth/signout" method="post" className="top-signout"><button className="icon-btn" aria-label="Sign out" title="Sign out">↗</button></form></div></header>
+        <header className="topbar"><div className="breadcrumb"><span>Workspace</span><b>/</b><strong>{pageTitle}</strong></div><div className="top-actions">{isDemo && <span className="demo-badge">DEMO ACCOUNT</span>}<span className="market-pill"><i></i> {[city, region].filter(Boolean).join(", ")}</span><button className="icon-btn" aria-label="Notifications" onClick={() => notify("You’re all caught up")}>♧<span className="notification-dot"></span></button><div className="header-avatar" aria-label={displayName}>{displayName.split(/\s+/).map(part => part[0]).join("").slice(0,2).toUpperCase()}</div>{isDemo ? <Link href="/login" className="demo-exit-button">Exit demo</Link> : <form action="/auth/signout" method="post" className="top-signout"><button className="icon-btn" aria-label="Sign out" title="Sign out">↗</button></form>}</div></header>
         <div className="page-content">
           {role === "business" && nav === "overview" && <BusinessOverview campaigns={campaigns} redemptions={redemptions} onCreate={() => setModal(true)} onNavigate={setNav} onNotify={notify} />}
           {role === "business" && nav === "campaigns" && <Campaigns campaigns={campaigns} onCreate={() => setModal(true)} />}
