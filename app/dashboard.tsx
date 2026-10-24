@@ -5,20 +5,20 @@ import Link from "next/link";
 
 type Role = "business" | "creator";
 type NavKey = "overview" | "campaigns" | "discover" | "results" | "opportunities" | "studio" | "earnings";
-type Creator = { name: string; handle: string; avatar: string; category: string; location: string; language: string; followers: string; engagement: string; rate: string; fit: number; kind: "reach" | "ugc"; blurb: string; color: string };
+type Creator = { name: string; handle: string; instagram: string; avatar: string; category: string; location: string; followers: string; engagement: string; rate: string; kind: "reach" | "ugc"; blurb: string; color: string };
 type Campaign = { title: string; location: string; code: string; budget: number; stage: string; uses: number; kind: string };
 
 const creators: Creator[] = [
-  { name: "Maya Chen", handle: "@mayamakesit", avatar: "MC", category: "Food & drink", location: "Portland · 2 mi", language: "English · Mandarin", followers: "8.2k", engagement: "7.8%", rate: "$140", fit: 96, kind: "reach", blurb: "Seasonal bites, independent cafés, and neighborhood favorites.", color: "peach" },
-  { name: "Jordan Wells", handle: "@weekendwithj", avatar: "JW", category: "Local life", location: "Portland · 3 mi", language: "English", followers: "12k", engagement: "6.2%", rate: "$180", fit: 91, kind: "reach", blurb: "A warm, editorial eye for the people and places that make a city.", color: "blue" },
-  { name: "Sam Rivera", handle: "@madebysam", avatar: "SR", category: "UGC video maker", location: "Beaverton · 7 mi", language: "English · Spanish", followers: "620", engagement: "—", rate: "$95 / video", fit: 98, kind: "ugc", blurb: "Clean product demos and natural café videos. 14 portfolio samples.", color: "sage" },
-  { name: "Priya Nair", handle: "@pdxcrumbs", avatar: "PN", category: "UGC video maker", location: "Portland · 2 mi", language: "English · Hindi", followers: "310", engagement: "—", rate: "$80 / video", fit: 94, kind: "ugc", blurb: "Food close-ups, voiceovers, and short-form recipe edits.", color: "lilac" },
+  { name: "Mangesh Padamwar", handle: "@pune_artkitchen", instagram: "https://www.instagram.com/pune_artkitchen/", avatar: "MP", category: "Food, travel & lifestyle", location: "Pune, Maharashtra", followers: "332k", engagement: "0.36%", rate: "Ask for rate", kind: "reach", blurb: "Pune-based creator sharing food, travel, lifestyle, and local discoveries.", color: "peach" },
+  { name: "Mrunmai", handle: "@tasteofmiles", instagram: "https://www.instagram.com/tasteofmiles/", avatar: "M", category: "Food & travel", location: "Pune, Maharashtra", followers: "54.4k", engagement: "1.29%", rate: "Ask for rate", kind: "reach", blurb: "Pune food blogger featuring local restaurants and travel finds.", color: "blue" },
+  { name: "Swarali Kulkarni Pendurkar", handle: "@mumbaifoodjunkie", instagram: "https://www.instagram.com/mumbaifoodjunkie/", avatar: "SK", category: "Food & travel", location: "Mumbai, Maharashtra", followers: "103.8k", engagement: "1.65%", rate: "Ask for rate", kind: "reach", blurb: "Mumbai food and travel creator covering local places, culture, and experiences.", color: "sage" },
+  { name: "Rohit Haryani", handle: "@thehungrymumbaikar", instagram: "https://www.instagram.com/thehungrymumbaikar/", avatar: "RH", category: "Food & travel", location: "Mumbai, Maharashtra", followers: "85.9k", engagement: "1.80%", rate: "Ask for rate", kind: "reach", blurb: "Mumbai-based food and travel creator sharing local dining discoveries.", color: "lilac" },
 ];
 
 const initialCampaigns: Campaign[] = [
-  { title: "Fall feels at Juniper & Moss", location: "Portland, OR", code: "COZYLOCAL", budget: 650, stage: "Live", uses: 78, kind: "Creator reach" },
-  { title: "Saturday market mornings", location: "Portland, OR", code: "MARKET10", budget: 400, stage: "2 pitches", uses: 0, kind: "Creator reach" },
-  { title: "Bring a friend, share a treat", location: "Beaverton, OR", code: "FRIENDTREAT", budget: 320, stage: "Completed", uses: 48, kind: "UGC + reach" },
+  { title: "Fall feels at Juniper & Moss", location: "Mumbai, Maharashtra", code: "COZYLOCAL", budget: 650, stage: "Live", uses: 78, kind: "Creator reach" },
+  { title: "Saturday market mornings", location: "Mumbai, Maharashtra", code: "MARKET10", budget: 400, stage: "2 pitches", uses: 0, kind: "Creator reach" },
+  { title: "Bring a friend, share a treat", location: "Navi Mumbai, Maharashtra", code: "FRIENDTREAT", budget: 320, stage: "Completed", uses: 48, kind: "UGC + reach" },
 ];
 
 const businessNav: { key: NavKey; label: string; icon: string }[] = [
@@ -35,9 +35,12 @@ export default function Dashboard({ role, displayName, city, region, email, isDe
   const [campaigns, setCampaigns] = useState(initialCampaigns);
   const [modal, setModal] = useState(false);
   const [toast, setToast] = useState("");
+  const [marketCity, setMarketCity] = useState(city);
+  const [marketRegion, setMarketRegion] = useState(region);
+  const [locationBusy, setLocationBusy] = useState(false);
   const [matchType, setMatchType] = useState<"reach" | "ugc">("reach");
   const [campaignName, setCampaignName] = useState("");
-  const [campaignLocation, setCampaignLocation] = useState("Portland, OR");
+  const [campaignLocation, setCampaignLocation] = useState("Mumbai, Maharashtra");
   const [campaignLanguage, setCampaignLanguage] = useState("English (US)");
   const [campaignGoal, setCampaignGoal] = useState("Bring more people in-store");
   const [campaignBudget, setCampaignBudget] = useState("500");
@@ -45,7 +48,7 @@ export default function Dashboard({ role, displayName, city, region, email, isDe
   const [copilotWorkflow, setCopilotWorkflow] = useState<string[]>([]);
   const [studioTask, setStudioTask] = useState<"caption" | "voiceover" | "localize" | "pitch">("caption");
   const [studioInput, setStudioInput] = useState("");
-  const [studioMarket, setStudioMarket] = useState("Portland, Oregon");
+  const [studioMarket, setStudioMarket] = useState("Mumbai, Maharashtra");
   const [studioLanguage, setStudioLanguage] = useState("English (US)");
   const [studioOutput, setStudioOutput] = useState("");
   const [studioDemo, setStudioDemo] = useState(false);
@@ -53,6 +56,7 @@ export default function Dashboard({ role, displayName, city, region, email, isDe
   const [studioBusy, setStudioBusy] = useState(false);
   const [redemptions, setRedemptions] = useState(126);
   const navItems = role === "business" ? businessNav : creatorNav;
+  const currentMarket = [marketCity, marketRegion].filter(Boolean).join(", ") || "Add your market";
 
   const pageTitle = useMemo(() => {
     const labels: Record<NavKey, string> = { overview: "Overview", campaigns: "Campaigns", discover: "Find creators", results: "Results", opportunities: "Opportunities", studio: "Creator studio", earnings: "Earnings & codes" };
@@ -62,6 +66,45 @@ export default function Dashboard({ role, displayName, city, region, email, isDe
   function notify(message: string) {
     setToast(message);
     window.setTimeout(() => setToast(""), 2400);
+  }
+
+  function useMyLocation() {
+    if (!navigator.geolocation) { notify("Location isn’t available in this browser."); return; }
+    const indianCities = [
+      { name: "Mumbai", region: "Maharashtra", lat: 19.076, lon: 72.878 },
+      { name: "Pune", region: "Maharashtra", lat: 18.520, lon: 73.856 },
+      { name: "Nashik", region: "Maharashtra", lat: 19.997, lon: 73.789 },
+      { name: "Nagpur", region: "Maharashtra", lat: 21.146, lon: 79.088 },
+      { name: "Delhi", region: "Delhi", lat: 28.614, lon: 77.209 },
+      { name: "Bengaluru", region: "Karnataka", lat: 12.972, lon: 77.595 },
+      { name: "Hyderabad", region: "Telangana", lat: 17.385, lon: 78.487 },
+      { name: "Chennai", region: "Tamil Nadu", lat: 13.083, lon: 80.270 },
+      { name: "Kolkata", region: "West Bengal", lat: 22.573, lon: 88.364 },
+      { name: "Ahmedabad", region: "Gujarat", lat: 23.023, lon: 72.572 },
+    ];
+    setLocationBusy(true);
+    navigator.geolocation.getCurrentPosition(position => {
+      const { latitude, longitude } = position.coords;
+      const nearest = indianCities.reduce((best, candidate) => {
+        const distance = (candidate.lat - latitude) ** 2 + (candidate.lon - longitude) ** 2;
+        return distance < best.distance ? { city: candidate, distance } : best;
+      }, { city: indianCities[0], distance: Number.POSITIVE_INFINITY });
+      if (nearest.distance > 4) {
+        setLocationBusy(false);
+        notify("We couldn’t match your location to a supported Indian city. You can keep using your current market.");
+        return;
+      }
+      const market = `${nearest.city.name}, ${nearest.city.region}`;
+      setMarketCity(nearest.city.name);
+      setMarketRegion(nearest.city.region);
+      setCampaignLocation(market);
+      setStudioMarket(market);
+      setLocationBusy(false);
+      notify(`Approximate market updated to ${market}`);
+    }, error => {
+      setLocationBusy(false);
+      notify(error.code === error.PERMISSION_DENIED ? "Location permission was denied. Allow it in your browser settings to continue." : "Couldn’t get your location. Please try again.");
+    }, { maximumAge: 60_000, timeout: 12_000 });
   }
 
   async function generateContent() {
@@ -116,12 +159,12 @@ export default function Dashboard({ role, displayName, city, region, email, isDe
         <nav className="side-nav">
           {navItems.map(item => <button key={item.key} className={nav === item.key ? "nav-active" : ""} onClick={() => setNav(item.key)}><span className="nav-icon">{item.icon}</span>{item.label}</button>)}
         </nav>
-        <div className="market-card"><span className="market-icon">⌖</span><div><small>YOUR LOCAL MARKET</small><b>{[city, region].filter(Boolean).join(", ") || "Add your market"}</b></div><span className="chevron">⌄</span></div>
+        <div className="market-card"><span className="market-icon">⌖</span><div className="market-card-copy"><small>YOUR LOCAL MARKET</small><b>{currentMarket}</b><button className="market-location-action" type="button" onClick={useMyLocation} disabled={locationBusy}>{locationBusy ? "Finding your city…" : "Use my location"}</button><small className="location-privacy">Browser location stays on your device. City match is approximate.</small></div></div>
         <div className="sidebar-bottom"><div className="user-avatar">{displayName.split(/\s+/).map(part => part[0]).join("").slice(0,2).toUpperCase()}</div><div className="user-lines"><b>{displayName}</b><span>{email}</span></div>{isDemo ? <Link className="dots demo-exit" href="/login" aria-label="Exit demo" title="Exit demo">↗</Link> : <form action="/auth/signout" method="post"><button className="dots" aria-label="Sign out" title="Sign out">↗</button></form>}</div>
       </aside>
 
       <main className="main-area">
-        <header className="topbar"><div className="breadcrumb"><span>Workspace</span><b>/</b><strong>{pageTitle}</strong></div><div className="top-actions">{isDemo && <span className="demo-badge">DEMO ACCOUNT</span>}<span className="market-pill"><i></i> {[city, region].filter(Boolean).join(", ")}</span><button className="icon-btn" aria-label="Notifications" onClick={() => notify("You’re all caught up")}>♧<span className="notification-dot"></span></button><div className="header-avatar" aria-label={displayName}>{displayName.split(/\s+/).map(part => part[0]).join("").slice(0,2).toUpperCase()}</div>{isDemo ? <Link href="/login" className="demo-exit-button">Exit demo</Link> : <form action="/auth/signout" method="post" className="top-signout"><button className="icon-btn" aria-label="Sign out" title="Sign out">↗</button></form>}</div></header>
+        <header className="topbar"><div className="breadcrumb"><span>Workspace</span><b>/</b><strong>{pageTitle}</strong></div><div className="top-actions">{isDemo && <span className="demo-badge">DEMO ACCOUNT</span>}<span className="market-pill"><i></i> {currentMarket}</span><button className="top-location-button" type="button" onClick={useMyLocation} disabled={locationBusy}>{locationBusy ? "Finding…" : "⌖ Use my location"}</button><button className="icon-btn" aria-label="Notifications" onClick={() => notify("You’re all caught up")}>♧<span className="notification-dot"></span></button><div className="header-avatar" aria-label={displayName}>{displayName.split(/\s+/).map(part => part[0]).join("").slice(0,2).toUpperCase()}</div>{isDemo ? <Link href="/login" className="demo-exit-button">Exit demo</Link> : <form action="/auth/signout" method="post" className="top-signout"><button className="icon-btn" aria-label="Sign out" title="Sign out">↗</button></form>}</div></header>
         <div className="page-content">
           {role === "business" && nav === "overview" && <BusinessOverview campaigns={campaigns} redemptions={redemptions} onCreate={() => setModal(true)} onNavigate={setNav} onNotify={notify} />}
           {role === "business" && nav === "campaigns" && <Campaigns campaigns={campaigns} onCreate={() => setModal(true)} />}
@@ -146,12 +189,12 @@ function PageIntro({ eyebrow, title, description, action, actionText }: { eyebro
 
 function BusinessOverview({ campaigns, redemptions, onCreate, onNavigate, onNotify }: { campaigns: Campaign[]; redemptions: number; onCreate: () => void; onNavigate: (key: NavKey) => void; onNotify: (message: string) => void }) {
   return <>
-    <PageIntro eyebrow="SATURDAY, OCTOBER 24 · PORTLAND, OR" title={<>Good morning, Juniper team <span className="sun-mark">✳</span></>} description="Your neighborhood is talking. Here’s how your partnerships are doing." action={onCreate} actionText="＋ Create a campaign" />
+    <PageIntro eyebrow="SATURDAY, OCTOBER 24 · MUMBAI, MAHARASHTRA" title={<>Good morning, Juniper team <span className="sun-mark">✳</span></>} description="Your neighborhood is talking. Here’s how your partnerships are doing." action={onCreate} actionText="＋ Create a campaign" />
     <div className="stat-grid"><StatCard icon="▤" label="Active campaigns" value="3" note="1 brief ready to share" /><StatCard icon="◎" label="Creator reach" value="42.8k" note="↑ 18% this month" /><StatCard icon="⌁" label="Offer-code uses" value={String(redemptions)} note="↑ 32 this week" /><StatCard icon="♡" label="Avg. engagement" value="6.4%" note="↑ 1.2% above local avg." /></div>
     <div className="dashboard-grid"><section className="panel campaign-panel"><div className="panel-heading"><div><h2>Campaigns in motion</h2><p>Your local partnerships at a glance.</p></div><button className="text-link" onClick={() => onNavigate("campaigns")}>All campaigns <span>→</span></button></div>{campaigns.slice(0, 3).map((campaign, i) => <CampaignRow key={`${campaign.code}-${i}`} campaign={campaign} />)}</section>
       <section className="panel match-panel"><div className="panel-heading"><div><h2>Creator matches</h2><p>Thoughtful fits for your next brief.</p></div><button className="text-link" onClick={() => onNavigate("discover")}>Explore <span>→</span></button></div>{creators.slice(0, 3).map((creator, i) => <CreatorLine key={creator.name} creator={creator} />)}<div className="match-note">✦ &nbsp;Matched to your location, audience & style</div></section>
       <section className="panel activity-panel"><div className="panel-heading"><div><h2>Recent activity</h2><p>Fresh from your creator community.</p></div><button className="text-link" onClick={() => onNotify("Showing latest activity")}>View all <span>→</span></button></div><Activity icon="✦" title="Maya Chen sent a pitch" detail="Saturday market mornings · $120 proposed" time="12 min ago" /><Activity icon="↗" title="COZYLOCAL was used 8 times" detail="Attributed to Fall feels at Juniper & Moss" time="Today" /><Activity icon="✓" title="Sam Rivera delivered a video draft" detail="Fall menu UGC · Ready for your review" time="Yesterday" /></section>
-      <section className="insight-card"><span className="insight-spark">✳</span><span className="eyebrow">LOCAL INSIGHT · PORTLAND</span><h3>Good stories travel a few blocks.</h3><p>Neighborhood businesses are seeing strong response from creators who make useful, save-worthy local guides.</p><button onClick={() => onNavigate("discover")}>See local creators <span>→</span></button></section>
+      <section className="insight-card"><span className="insight-spark">✳</span><span className="eyebrow">LOCAL INSIGHT · MUMBAI</span><h3>Good stories travel a few blocks.</h3><p>Neighborhood businesses are seeing strong response from creators who make useful, save-worthy local guides.</p><button onClick={() => onNavigate("discover")}>See local creators <span>→</span></button></section>
     </div>
   </>;
 }
@@ -166,7 +209,7 @@ function CampaignRow({ campaign }: { campaign: Campaign }) {
 }
 
 function CreatorLine({ creator }: { creator: Creator }) {
-  return <div className="creator-line"><div className={`creator-avatar ${creator.color}`}>{creator.avatar}</div><div className="creator-copy"><b>{creator.name}</b><span>{creator.category} · {creator.location}</span></div><span className="fit-score">{creator.fit}% fit</span></div>;
+  return <div className="creator-line"><div className={`creator-avatar ${creator.color}`}>{creator.avatar}</div><div className="creator-copy"><b>{creator.name}</b><span>{creator.category} · {creator.location}</span></div><span className="fit-score">{creator.location.split(",")[0]}</span></div>;
 }
 
 function Activity({ icon, title, detail, time }: { icon: string; title: string; detail: string; time: string }) {
@@ -179,7 +222,24 @@ function Campaigns({ campaigns, onCreate }: { campaigns: Campaign[]; onCreate: (
 
 function CreatorDiscovery({ matchType, setMatchType, onInvite }: { matchType: "reach" | "ugc"; setMatchType: (type: "reach" | "ugc") => void; onInvite: (name: string) => void }) {
   const filtered = creators.filter(creator => creator.kind === matchType);
-  return <><PageIntro eyebrow="LOCAL PEOPLE, GREAT STORIES" title="Find your creator match" description="Choose whether you need local audience reach or great content production."/><div className="match-toggle"><button className={matchType === "reach" ? "active" : ""} onClick={() => setMatchType("reach")}>◎ &nbsp;Creator reach <small>Audience, community & influence</small></button><button className={matchType === "ugc" ? "active" : ""} onClick={() => setMatchType("ugc")}>▣ &nbsp;UGC makers <small>Content quality & price, any audience size</small></button></div><div className="filters-row"><span>⌖ &nbsp;Within 10 miles</span><span>⌘ &nbsp;All categories</span><span>◉ &nbsp;English · Spanish</span><span className="result-count">{filtered.length} local matches</span></div><div className="creator-grid">{filtered.map(creator => <article className="creator-card" key={creator.name}><div className="creator-card-top"><div className={`creator-avatar large ${creator.color}`}>{creator.avatar}</div><span className="fit-score">{creator.fit}% fit</span></div><h3>{creator.name}</h3><span className="creator-handle">{creator.handle} · {creator.location}</span><p>{creator.blurb}</p><div className="creator-meta"><span>{matchType === "ugc" ? "Portfolio" : "Audience"}<b>{matchType === "ugc" ? "14 samples" : creator.followers}</b></span><span>Languages<b>{creator.language}</b></span><span>{matchType === "ugc" ? "Starting at" : "Engagement"}<b>{matchType === "ugc" ? creator.rate : creator.engagement}</b></span></div><div className="why-fit">✦ {matchType === "ugc" ? "Portfolio quality and rate fit your brief" : "Nearby audience and content fit"}</div><button className="button-primary full-button" onClick={() => onInvite(creator.name)}>Invite to campaign <span>→</span></button></article>)}</div></>;
+  return <>
+    <PageIntro eyebrow="LOCAL PEOPLE, GREAT STORIES" title="Find your creator match" description="Explore public Instagram creator profiles around Pune and Mumbai." />
+    <div className="match-toggle">
+      <button className={matchType === "reach" ? "active" : ""} onClick={() => setMatchType("reach")}>◎ &nbsp;Creator reach <small>Audience, community & influence</small></button>
+      <button className={matchType === "ugc" ? "active" : ""} onClick={() => setMatchType("ugc")}>▣ &nbsp;UGC makers <small>Content quality & price, any audience size</small></button>
+    </div>
+    <div className="filters-row"><span>⌖ &nbsp;Pune · Mumbai</span><span>⌘ &nbsp;Food · Travel · Lifestyle</span><span>◉ &nbsp;Check languages on profiles</span><span className="result-count">{filtered.length} public profiles</span></div>
+    <div className="creator-grid">
+      {filtered.length ? filtered.map(creator => <article className="creator-card" key={creator.name}>
+        <div className="creator-card-top"><div className={`creator-avatar large ${creator.color}`}>{creator.avatar}</div><span className="fit-score">{creator.location.split(",")[0]}</span></div>
+        <h3>{creator.name}</h3><span className="creator-handle"><a href={creator.instagram} target="_blank" rel="noreferrer">{creator.handle} ↗</a> · {creator.location}</span>
+        <p>{creator.blurb}</p>
+        <div className="creator-meta"><span>Followers<b>{creator.followers}</b></span><span>Engagement<b>{creator.engagement}</b></span><span>Rate<b>{creator.rate}</b></span></div>
+        <div className="why-fit">Public Instagram profile · Metrics are estimates and may change.</div>
+        <button className="button-primary full-button" onClick={() => onInvite(creator.name)}>Draft an invitation <span>→</span></button>
+      </article>) : <div className="panel empty-creators"><b>No public UGC profiles in this sample</b><p>The listed accounts are local creator-reach profiles. Open their Instagram pages to review their latest work and collaboration details.</p></div>}
+    </div>
+  </>;
 }
 
 function BusinessResults({ campaigns, redemptions, onAdd, onNotify }: { campaigns: Campaign[]; redemptions: number; onAdd: () => void; onNotify: (message: string) => void }) {
@@ -191,7 +251,7 @@ function BusinessResults({ campaigns, redemptions, onAdd, onNotify }: { campaign
     setBusy(true);
     try {
       const prompt = JSON.stringify({ campaigns: campaigns.map(campaign => ({ title: campaign.title, code: campaign.code, recordedUses: campaign.uses })), totalRecordedOfferUses: redemptions, estimatedReach: 42810, estimatedEngagement: "6.4%", sampleAttributedSales: 2460 });
-      const response = await fetch("/api/copilot", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ task: "results", prompt, locale: "English (US)", market: "Portland, Oregon" }) });
+      const response = await fetch("/api/copilot", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ task: "results", prompt, locale: "English", market: "Mumbai, Maharashtra" }) });
       const data = await response.json() as { text?: string; error?: string; workflow?: string[]; demo?: boolean };
       if (!response.ok) throw new Error(data.error || "Could not prepare a results recap.");
       setAnalysis(data.text || "");
@@ -207,7 +267,7 @@ function BusinessResults({ campaigns, redemptions, onAdd, onNotify }: { campaign
 }
 
 function CreatorOverview({ onNavigate, onNotify }: { onNavigate: (key: NavKey) => void; onNotify: (message: string) => void }) {
-  return <><PageIntro eyebrow="YOUR CREATOR SPACE · BEAVERTON, OR" title={<>Make good work. Find good partners. <span className="sun-mark">✳</span></>} description="Local opportunities, clear terms, and a little help making your next great post." action={() => onNavigate("opportunities")} actionText="Browse opportunities"/><div className="stat-grid"><StatCard icon="✳" label="Open opportunities" value="12" note="Within 15 miles of you"/><StatCard icon="▣" label="UGC briefs" value="5" note="Follower count not required"/><StatCard icon="⌁" label="Offer-code uses" value="34" note="Across your live campaigns"/><StatCard icon="$" label="This month" value="$480" note="$90 performance bonus"/></div><div className="dashboard-grid"><section className="panel"><div className="panel-heading"><div><h2>Picked for your portfolio</h2><p>Local briefs that fit your style and languages.</p></div><button className="text-link" onClick={() => onNavigate("opportunities")}>All briefs <span>→</span></button></div><OpportunityRow title="Fall menu, honest first bite" business="Juniper & Moss · Portland · 2.1 mi" compensation="$140 + hosted brunch" type="Creator reach"/><OpportunityRow title="Three cozy café clips" business="Mosslight Coffee · Beaverton · 1.4 mi" compensation="$95 / video · usage included" type="UGC maker"/><OpportunityRow title="Neighborhood weekend guide" business="Saturday Market · Portland · 6.8 mi" compensation="$120 fixed + MARKET10 bonus" type="Creator reach"/></section><section className="panel studio-promo"><span className="studio-icon">✎</span><span className="eyebrow">YOUR CREATOR STUDIO</span><h2>Words can sound like you.</h2><p>Draft captions, shape a voiceover, and adapt your post for a local audience—all from the campaign brief.</p><button className="button-primary" onClick={() => onNavigate("studio")}>Open creator studio <span>→</span></button><div className="language-tags"><span>English</span><span>Español</span><span>Local tone</span></div></section><section className="panel activity-panel"><div className="panel-heading"><div><h2>Campaign tracker</h2><p>Keep your agreements and results close.</p></div><button className="text-link" onClick={() => onNavigate("earnings")}>Offer codes <span>→</span></button></div><Activity icon="✓" title="Fall menu video · Draft due" detail="Juniper & Moss · Due Oct 26" time="2 days left"/><Activity icon="⌁" title="COZYLOCAL · 18 uses" detail="Your attributed code activity" time="Updated today"/></section><section className="local-card"><span className="eyebrow">LOCALIZED FOR YOU</span><h3>Work in the language your community uses.</h3><p>Your profile lists English and Spanish. We’ll surface briefs where those languages are a plus.</p><button onClick={() => onNotify("Language preferences are ready to update")}>Edit language preferences →</button></section></div></>;
+  return <><PageIntro eyebrow="YOUR CREATOR SPACE · NAVI MUMBAI, MAHARASHTRA" title={<>Make good work. Find good partners. <span className="sun-mark">✳</span></>} description="Local opportunities, clear terms, and a little help making your next great post." action={() => onNavigate("opportunities")} actionText="Browse opportunities"/><div className="stat-grid"><StatCard icon="✳" label="Open opportunities" value="12" note="Within 25 km of you"/><StatCard icon="▣" label="UGC briefs" value="5" note="Follower count not required"/><StatCard icon="⌁" label="Offer-code uses" value="34" note="Across your live campaigns"/><StatCard icon="₹" label="This month" value="₹40,000" note="₹7,500 performance bonus"/></div><div className="dashboard-grid"><section className="panel"><div className="panel-heading"><div><h2>Picked for your portfolio</h2><p>Local briefs that fit your style and languages.</p></div><button className="text-link" onClick={() => onNavigate("opportunities")}>All briefs <span>→</span></button></div><OpportunityRow title="Fall menu, honest first bite" business="Juniper & Moss · Mumbai · 3 km" compensation="₹11,500 + hosted brunch" type="Creator reach"/><OpportunityRow title="Three cozy café clips" business="Mosslight Coffee · Navi Mumbai · 2 km" compensation="₹8,000 / video · usage included" type="UGC maker"/><OpportunityRow title="Neighborhood weekend guide" business="Saturday Market · Mumbai · 11 km" compensation="₹10,000 fixed + MARKET10 bonus" type="Creator reach"/></section><section className="panel studio-promo"><span className="studio-icon">✎</span><span className="eyebrow">YOUR CREATOR STUDIO</span><h2>Words can sound like you.</h2><p>Draft captions, shape a voiceover, and adapt your post for a local audience—all from the campaign brief.</p><button className="button-primary" onClick={() => onNavigate("studio")}>Open creator studio <span>→</span></button><div className="language-tags"><span>English</span><span>हिन्दी</span><span>Local tone</span></div></section><section className="panel activity-panel"><div className="panel-heading"><div><h2>Campaign tracker</h2><p>Keep your agreements and results close.</p></div><button className="text-link" onClick={() => onNavigate("earnings")}>Offer codes <span>→</span></button></div><Activity icon="✓" title="Fall menu video · Draft due" detail="Juniper & Moss · Due Oct 26" time="2 days left"/><Activity icon="⌁" title="COZYLOCAL · 18 uses" detail="Your attributed code activity" time="Updated today"/></section><section className="local-card"><span className="eyebrow">LOCALIZED FOR YOU</span><h3>Work in the language your community uses.</h3><p>Your profile lists English and Hindi. We’ll surface briefs where those languages are a plus.</p><button onClick={() => onNotify("Language preferences are ready to update")}>Edit language preferences →</button></section></div></>;
 }
 
 function OpportunityRow({ title, business, compensation, type }: { title: string; business: string; compensation: string; type: string }) {
@@ -215,7 +275,7 @@ function OpportunityRow({ title, business, compensation, type }: { title: string
 }
 
 function Opportunities({ onPitch }: { onPitch: (name: string) => void }) {
-  return <><PageIntro eyebrow="LOCAL PAID WORK" title="Opportunities for you" description="Clear briefs from nearby businesses. Pitch only when it feels right."/><div className="filters-row"><span>⌖ &nbsp;Within 15 miles</span><span>◉ &nbsp;English · Spanish</span><span>☷ &nbsp;All opportunity types</span></div><div className="opportunity-list">{[{ title: "Fall menu, honest first bite", biz: "Juniper & Moss · Portland · 2.1 mi", pay: "$140 fixed + hosted brunch", tag: "Creator reach", desc: "Share an authentic first look at the new fall menu. One short video, caption, and unique code. English or Spanish welcome." }, { title: "Three cozy café clips", biz: "Mosslight Coffee · Beaverton · 1.4 mi", pay: "$95 per finished video", tag: "UGC · no audience needed", desc: "Create three vertical café clips for the brand’s social channels. Portfolio quality matters; follower count does not. Usage: 90 days." }, { title: "Neighborhood weekend guide", biz: "Saturday Market · Portland · 6.8 mi", pay: "$120 + code-use bonus", tag: "Creator reach", desc: "Make a save-worthy guide to weekend market finds, with a tracked offer code and clear disclosure." }].map(item => <article className="opportunity-card" key={item.title}><div className="opportunity-card-top"><span className="type-label">{item.tag}</span><span className="distance">⌖ {item.biz.split(" · ")[2]}</span></div><h2>{item.title}</h2><p className="opportunity-business">{item.biz}</p><p className="opportunity-desc">{item.desc}</p><div className="opportunity-card-foot"><div><b>{item.pay}</b><span>Terms shown upfront · Local offer tracking</span></div><button className="button-primary" onClick={() => onPitch(item.title)}>Draft a pitch <span>→</span></button></div></article>)}</div></>;
+  return <><PageIntro eyebrow="LOCAL PAID WORK" title="Opportunities for you" description="Clear briefs from nearby businesses. Pitch only when it feels right."/><div className="filters-row"><span>⌖ &nbsp;Within 25 km</span><span>◉ &nbsp;English · Hindi · Marathi</span><span>☷ &nbsp;All opportunity types</span></div><div className="opportunity-list">{[{ title: "A monsoon menu, first bite", biz: "Juniper & Moss · Mumbai · 3 km", pay: "$140 fixed + hosted brunch", tag: "Creator reach", desc: "Share an authentic first look at the seasonal menu. One short video, caption, and unique code. English, Hindi, or Marathi welcome." }, { title: "Three cozy café clips", biz: "Mosslight Coffee · Navi Mumbai · 2 km", pay: "$95 per finished video", tag: "UGC · no audience needed", desc: "Create three vertical café clips for the brand’s social channels. Portfolio quality matters; follower count does not. Usage: 90 days." }, { title: "Neighborhood weekend guide", biz: "Saturday Market · Pune · 11 km", pay: "$120 + code-use bonus", tag: "Creator reach", desc: "Make a save-worthy guide to weekend market finds, with a tracked offer code and clear disclosure." }].map(item => <article className="opportunity-card" key={item.title}><div className="opportunity-card-top"><span className="type-label">{item.tag}</span><span className="distance">⌖ {item.biz.split(" · ")[2]}</span></div><h2>{item.title}</h2><p className="opportunity-business">{item.biz}</p><p className="opportunity-desc">{item.desc}</p><div className="opportunity-card-foot"><div><b>{item.pay}</b><span>Terms shown upfront · Local offer tracking</span></div><button className="button-primary" onClick={() => onPitch(item.title)}>Draft a pitch <span>→</span></button></div></article>)}</div></>;
 }
 
 function CreatorStudio({ task, setTask, input, setInput, market, setMarket, language, setLanguage, output, demo, workflow, busy, onGenerate, onNotify }: { task: "caption" | "voiceover" | "localize" | "pitch"; setTask: (value: "caption" | "voiceover" | "localize" | "pitch") => void; input: string; setInput: (value: string) => void; market: string; setMarket: (value: string) => void; language: string; setLanguage: (value: string) => void; output: string; demo: boolean; workflow: string[]; busy: boolean; onGenerate: () => void; onNotify: (message: string) => void }) {

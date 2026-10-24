@@ -25,3 +25,16 @@
 .demo-exit-button:hover{background:#f5f8f1}
 .demo-exit{text-decoration:none}
 @media(max-width:760px){.demo-access>div{gap:7px}.demo-button{font-size:9px;padding:9px 6px}.top-actions .demo-badge{display:none}}
+.creator-handle a{color:#4d7352;font-weight:700;text-decoration:none}
+.creator-handle a:hover{text-decoration:underline}
+.empty-creators{grid-column:1/-1}
+.empty-creators b{font-size:12px}
+.empty-creators p{font-size:10px;color:#718078;line-height:1.5}
+.market-card-copy{min-width:0;display:grid;gap:4px}
+.market-card-copy b{overflow-wrap:anywhere}
+.market-card .location-privacy{max-width:165px;line-height:1.4;letter-spacing:0;color:#bdd0c2;font-size:7px;margin-top:3px}
+.market-location-action{justify-self:start;border:0;background:transparent;padding:2px 0;color:#d7ec9c;font-size:9px;font-weight:700}
+.market-location-action:disabled,.top-location-button:disabled{opacity:.65;cursor:wait}
+.top-location-button{border:1px solid #dfe5dc;background:white;border-radius:8px;padding:8px 10px;color:#4e6557;font-size:9px;font-weight:600;white-space:nowrap}
+.top-location-button:hover{background:#f5f8f1}
+@media(max-width:760px){.top-location-button{padding:7px;font-size:8px}.market-pill{max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}

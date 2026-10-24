@@ -9,8 +9,8 @@ export default async function DemoPage({ params }: { params: Promise<{ role: str
     <Dashboard
       role={role}
       displayName={role === "business" ? "Juniper & Moss" : "Sam Rivera"}
-      city={role === "business" ? "Portland" : "Beaverton"}
-      region="Oregon"
+      city={role === "business" ? "Mumbai" : "Navi Mumbai"}
+      region="Maharashtra"
       email="Sample demo account"
       isDemo
     />

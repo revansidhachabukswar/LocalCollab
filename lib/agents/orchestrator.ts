@@ -9,35 +9,33 @@ const model = process.env.OPENAI_MODEL || "gpt-4.1-mini";
 const baseRules = `Do not invent business facts, product claims, discounts, addresses, audience metrics, creator prices, legal requirements, or performance outcomes. Preserve supplied promo codes and deal terms exactly. Make drafts concise and editable. Never send, publish, book, accept, or pay on a user's behalf.`;
 
 const sampleCreators = [
-  { name: "Maya Chen", category: "Food & drink creator", market: "Portland, OR", languages: ["English (US)", "Mandarin"], audience: 8200, engagement: 7.8, feeUsd: 140, offers: ["audience_reach"] },
-  { name: "Jordan Wells", category: "Local life creator", market: "Portland, OR", languages: ["English (US)"], audience: 12000, engagement: 6.2, feeUsd: 180, offers: ["audience_reach"] },
-  { name: "Sam Rivera", category: "UGC video maker", market: "Beaverton, OR", languages: ["English (US)", "Español (US)"], audience: 620, engagement: null, feeUsd: 95, offers: ["ugc_production"], portfolio: "14 sample videos; café visits and product demos" },
-  { name: "Priya Nair", category: "UGC video maker", market: "Portland, OR", languages: ["English (US)", "Hindi"], audience: 310, engagement: null, feeUsd: 80, offers: ["ugc_production"], portfolio: "Food close-ups, voiceovers, and short recipe edits" },
+  { name: "Mangesh Padamwar", handle: "@pune_artkitchen", instagram: "https://www.instagram.com/pune_artkitchen/", category: "Food, travel & lifestyle creator", market: "Pune, Maharashtra", languages: [], audience: 332300, engagement: 0.36, offers: ["audience_reach"] },
+  { name: "Mrunmai", handle: "@tasteofmiles", instagram: "https://www.instagram.com/tasteofmiles/", category: "Food & travel creator", market: "Pune, Maharashtra", languages: [], audience: 54400, engagement: 1.29, offers: ["audience_reach"] },
+  { name: "Swarali Kulkarni Pendurkar", handle: "@mumbaifoodjunkie", instagram: "https://www.instagram.com/mumbaifoodjunkie/", category: "Food & travel creator", market: "Mumbai, Maharashtra", languages: [], audience: 103800, engagement: 1.65, offers: ["audience_reach"] },
+  { name: "Rohit Haryani", handle: "@thehungrymumbaikar", instagram: "https://www.instagram.com/thehungrymumbaikar/", category: "Food & travel creator", market: "Mumbai, Maharashtra", languages: [], audience: 85900, engagement: 1.8, offers: ["audience_reach"] },
 ];
 
 const findCreators = tool({
-  name: "search_sample_local_creators",
-  description: "Search the verified sample creator list by campaign type, market, language, and maximum fee. For UGC, rank portfolio and price; follower count must not be a penalty or eligibility rule.",
+  name: "search_public_instagram_creators",
+  description: "Search the available public Instagram creator profiles by campaign type, market, and language. Public follower and engagement figures are estimates; fees and languages are not listed and must be verified directly. For UGC, do not present reach creators as UGC makers.",
   parameters: z.object({
     campaignType: z.enum(["audience_reach", "ugc_production"]),
     market: z.string(),
     language: z.string().optional(),
-    maxFeeUsd: z.number().optional(),
   }),
-  execute: async ({ campaignType, market, language, maxFeeUsd }) => {
+  execute: async ({ campaignType, market, language }) => {
     const wantedCity = market.toLocaleLowerCase().split(",")[0].trim();
     const sameMarket = sampleCreators.filter(person => person.market.toLocaleLowerCase().includes(wantedCity) || wantedCity === "unspecified");
     const matches = (sameMarket.length ? sameMarket : sampleCreators).filter(person => {
       if (!person.offers.includes(campaignType)) return false;
-      if (maxFeeUsd !== undefined && person.feeUsd > maxFeeUsd) return false;
-      if (language && !person.languages.some(item => item.toLocaleLowerCase().startsWith(language.toLocaleLowerCase().slice(0, 2)))) return false;
+      if (language && person.languages.length > 0 && !person.languages.some(item => item.toLocaleLowerCase().startsWith(language.toLocaleLowerCase().slice(0, 2)))) return false;
       return true;
     });
     return JSON.stringify(matches.map(person => ({
-      name: person.name, category: person.category, market: person.market, languages: person.languages,
-      feeUsd: person.feeUsd, audience: person.audience, engagement: person.engagement,
+      name: person.name, handle: person.handle, instagram: person.instagram, category: person.category, market: person.market, languages: person.languages,
+      rateStatus: "Not publicly listed; ask the creator directly.", audience: person.audience, engagement: person.engagement,
       portfolio: "portfolio" in person ? person.portfolio : undefined,
-      matchBasis: campaignType === "ugc_production" ? "Portfolio and fee; audience size is not used as a filter." : "Audience, engagement, content category, market, and fee.",
+      matchBasis: campaignType === "ugc_production" ? "No verified UGC profiles in the public sample list." : "Public audience and engagement estimates, content category, market, and profile-provided languages when available; rate not provided.",
     })));
   },
 });
@@ -51,7 +49,7 @@ const localLanguageAgent = new Agent({
 const creatorMatchAgent = new Agent({
   name: "Local Creator Matchmaker",
   model,
-  instructions: `Find real candidates only by calling search_sample_local_creators. Explain the fit using the returned fields only. Clearly distinguish audience reach from UGC production. UGC matching must prioritize the portfolio and fee; a small follower count is not a disadvantage. Never invent candidates, prices, locations, or metrics. ${baseRules}`,
+  instructions: `Find candidates only by calling search_public_instagram_creators. Explain the fit using the returned fields only. Clearly distinguish audience reach from UGC production. UGC matching must prioritize verified portfolio details; a small follower count is not a disadvantage. Never invent candidates, prices, locations, or metrics. ${baseRules}`,
   tools: [findCreators],
 });
 
